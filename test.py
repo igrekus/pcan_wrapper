@@ -1,47 +1,45 @@
-from PCANBasic import PCANBasic, TPCANMsg
+from pcan.PCANBasic import PCANBasic, TPCANMsg
 from time import sleep
 
 from ctypes import *
 
+CHAN_ID = 65
+BAUDRATE = c_ushort(284)
+HW_TYPE = c_ubyte(1)
+IO_PORT = 256
+INTERRUPT = 3
 pcan = PCANBasic()
 
-print('init')
-pcan.Initialize(65, c_ushort(284), c_ubyte(1), 256, 3)
 
-sleep(2)
+def build_message(id, command, p_array):
+    """
+    :param id -- идентификатор подсистемы
+    :param command -- команда, которую должна будет выполнить подсистема
+    :param p_array -- массив параметров команды
+    """
+    message = TPCANMsg()
 
-print('ready msg')
-msg = TPCANMsg()
+    message.ID = id
+    message.LEN = 8
+    message.MSGTYPE = 0
 
-msg.ID = 255
-msg.LEN = 8
-msg.MSGTYPE = 0
+    p_array = [command] + p_array
+    for i in range(8):
+        message.DATA[i] = p_array[i]
 
-# for i, val in enumerate([252, 0, 3, 0, 0, 0, 0, 0]):
-    # msg.DATA[i] = int(str(val))
-    
-data = [0, 0, 2, 0, 0, 0, 0, 0]
-for i in range(8):
-    msg.DATA[i] = data[i]
+    return message
 
-# msg.DATA = [] (c_ubyte * 8)(*[c_ubyte(d) for d in [1, 0, 2, 0, 0, 0, 0, 0]])
 
-print(msg.ID)
-print(msg.LEN)
-print(msg.MSGTYPE)
-print(msg.DATA, list(msg.DATA))
+print('PCAN init')
+pcan.Initialize(CHAN_ID, BAUDRATE, HW_TYPE, IO_PORT, INTERRUPT)
 
-print('send msg')
+sleep(1)
+
+print('ready message')
+msg = build_message(id=255, command=1, p_array=[0, 2, 0, 0, 0, 0, 0])
+
+print('send message')
 result = pcan.Write(65, msg)
-print('result', result)
 
-sleep(3)
-
-# for i, val in enumerate([0, 0, 2, 0, 0, 0, 0, 0]):
-    # msg.DATA[i] = int(str(val), 16)
-
-# msg.DATA = (c_ubyte * 8)(*[c_ubyte(d) for d in [0, 0, 2, 0, 0, 0, 0, 0]])
-
-# pcan.Write(65, msg)
-
+print('PCAN release')
 pcan.Uninitialize(65)
