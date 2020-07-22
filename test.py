@@ -54,16 +54,17 @@ class Message:
         return self._tpcan_message
 
 
-print('PCAN init')
-can = PCan()
+if __name__ == '__main__':
+    print('PCAN init')
+    can = PCan()
 
-sleep(1)
+    sleep(1)
 
-print('ready message')
-msg = Message(id=255, command=1, p_array=[0, 2, 0, 0, 0, 0, 0])
+    print('ready message')
+    msg = Message(id=255, command=1, p_array=[0, 2, 0, 0, 0, 0, 0])
 
-print('send message')
-can.send(msg)
+    print('send message')
+    can.send(msg)
 
-print('PCAN release')
-can.close()
+    print('PCAN release')
+    can.close()
