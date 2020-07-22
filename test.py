@@ -3,12 +3,25 @@ from time import sleep
 
 from ctypes import *
 
-CHAN_ID = 65
-BAUDRATE = c_ushort(284)
-HW_TYPE = c_ubyte(1)
-IO_PORT = 256
-INTERRUPT = 3
-pcan = PCANBasic()
+
+class PCan:
+    def __init__(self, chan=0x41, baudrate=0x11C, hw_type=0x1, io_port=0x100, interrupt=0x3):
+        self._chan = chan
+
+        self._can = PCANBasic()
+        self._can.Initialize(
+            Channel=chan,
+            Btr0Btr1=c_ushort(baudrate),
+            HwType=c_ubyte(hw_type),
+            IOPort=c_uint(io_port),
+            Interrupt=c_ushort(interrupt)
+        )
+
+    def send(self, message):
+        return self._can.Write(self._chan, message)
+
+    def close(self):
+        self._can.Uninitialize(self._chan)
 
 
 def build_message(id, command, p_array):
@@ -31,7 +44,7 @@ def build_message(id, command, p_array):
 
 
 print('PCAN init')
-pcan.Initialize(CHAN_ID, BAUDRATE, HW_TYPE, IO_PORT, INTERRUPT)
+can = PCan()
 
 sleep(1)
 
@@ -39,7 +52,7 @@ print('ready message')
 msg = build_message(id=255, command=1, p_array=[0, 2, 0, 0, 0, 0, 0])
 
 print('send message')
-result = pcan.Write(65, msg)
+can.send(msg)
 
 print('PCAN release')
-pcan.Uninitialize(65)
+can.close()
