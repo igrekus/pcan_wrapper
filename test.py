@@ -18,29 +18,40 @@ class PCan:
         )
 
     def send(self, message):
-        return self._can.Write(self._chan, message)
+        return self._can.Write(self._chan, message.tpcan_message)
 
     def close(self):
         self._can.Uninitialize(self._chan)
 
 
-def build_message(id, command, p_array):
-    """
-    :param id -- идентификатор подсистемы
-    :param command -- команда, которую должна будет выполнить подсистема
-    :param p_array -- массив параметров команды
-    """
-    message = TPCANMsg()
+class Message:
+    def __init__(self, id, command, p_array):
+        """
+        :param id -- идентификатор подсистемы
+        :param command -- команда, которую должна будет выполнить подсистема
+        :param p_array -- массив параметров команды
+        """
+        self._id = id
+        self._command = command
+        self._p_array = p_array
 
-    message.ID = id
-    message.LEN = 8
-    message.MSGTYPE = 0
+        self._tpcan_message = None
 
-    p_array = [command] + p_array
-    for i in range(8):
-        message.DATA[i] = p_array[i]
+    def _build_message(self):
+        self._tpcan_message = TPCANMsg()
+        self._tpcan_message.ID = self._id
+        self._tpcan_message.LEN = 8
+        self._tpcan_message.MSGTYPE = 0
 
-    return message
+        self._p_array = [self._command] + self._p_array
+        for i, byte in enumerate(self._p_array):
+            self._tpcan_message.DATA[i] = byte
+
+    @property
+    def tpcan_message(self):
+        if self._tpcan_message is None:
+            self._build_message()
+        return self._tpcan_message
 
 
 print('PCAN init')
@@ -49,7 +60,7 @@ can = PCan()
 sleep(1)
 
 print('ready message')
-msg = build_message(id=255, command=1, p_array=[0, 2, 0, 0, 0, 0, 0])
+msg = Message(id=255, command=1, p_array=[0, 2, 0, 0, 0, 0, 0])
 
 print('send message')
 can.send(msg)
