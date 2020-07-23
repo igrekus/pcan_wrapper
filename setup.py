@@ -5,7 +5,7 @@ with open('README.md', 'r') as f:
 
 setuptools.setup(
     name='pcan_wrapper',
-    version='0.0.1',
+    version='0.0.2',
     author='igrekus',
     author_email='',
     description='Simple wrapper around PEAK-System Technik GmbH CAN SDK',
