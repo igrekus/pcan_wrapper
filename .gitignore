@@ -154,27 +154,4 @@ fabric.properties
 
 \.idea/
 
-data/
-
-venv1/
-
-venv/
-
-cutoff_delta\.xlsx
-
-cutoff_freq\.xlsx
-
-plots\.png
-
-data1/
-
-data2/
-
 ref/
-
-*.xlsx
-imgui\.ini
-
-instr/
-
-pcan/
