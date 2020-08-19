@@ -18,7 +18,7 @@ class PCan:
         )
 
     def send(self, message):
-        return self._can.Write(self._chan, message.tpcan_message)
+        return self._can.Write(self._chan, message.as_ctype)
 
     def close(self):
         self._can.Uninitialize(self._chan)
