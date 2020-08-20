@@ -32,13 +32,13 @@ class Message:
 
     def _build_message(self):
         self._ctype_message = CtypeMessage()
-        self._ctype_message.ID = self._id
-        self._ctype_message.LEN = 8
-        self._ctype_message.MSGTYPE = 0
+        self._ctype_message.ID = c_uint(self._id)
+        self._ctype_message.LEN = c_ubyte(8)
+        self._ctype_message.MSGTYPE = c_ubyte(0)
 
         self._p_array = [self._command] + self._p_array
         for i, byte in enumerate(self._p_array):
-            self._ctype_message.DATA[i] = byte
+            self._ctype_message.DATA[i] = c_ubyte(byte)
 
     @property
     def as_ctype(self):
