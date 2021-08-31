@@ -372,7 +372,7 @@ class PCANBasic:
         # Loads the PCANBasic.dll
         #
         if platform.system() == 'Windows':
-            self.__m_dllBasic = windll.LoadLibrary("./pcan/PCANBasic")
+            self.__m_dllBasic = windll.LoadLibrary("PCANBasic")
         else:
             self.__m_dllBasic = cdll.LoadLibrary("libpcanbasic.so")
         if self.__m_dllBasic == None:
